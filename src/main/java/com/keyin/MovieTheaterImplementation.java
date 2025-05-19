@@ -1,7 +1,13 @@
 package com.keyin;
 
+import java.util.Scanner; // Import Scanner for user input
+
 public class MovieTheaterImplementation {
-    private final String[][] seats;
+    final String[][] seats;
+
+    public String getSeat(int row, int col) {
+        return seats[row][col];
+    }
 
     // Constructor
     public MovieTheaterImplementation(int rows, int cols) {
@@ -18,7 +24,7 @@ public class MovieTheaterImplementation {
         try {
             if ("Available".equals(seats[row][col])) {
                 seats[row][col] = name;
-                System.out.println("Seat reserved successfully!");
+                System.out.println("Seat reserved successfully for " + name + "!");
             } else {
                 System.out.println("Seat taken! Suggesting an available seat...");
                 suggestSeat();
@@ -55,25 +61,70 @@ public class MovieTheaterImplementation {
         }
     }
 
-    // Print the seating chart
     public void printSeatingChart() {
         System.out.println("\nCurrent Seating Chart:");
-        for (String[] row : seats) {
-            for (String seat : row) {
-                System.out.print(seat + " | ");
+
+        System.out.print("   ");
+        for (int col = 1; col <= seats[0].length; col++) {
+            System.out.printf("%-10d", col);
+        }
+        System.out.println();
+
+        // Print rows with labels
+        for (int i = 0; i < seats.length; i++) {
+            System.out.printf("%-3d", (i + 1));
+            for (String seat : seats[i]) {
+                System.out.printf("%-10s", seat);
             }
             System.out.println();
         }
     }
 
-    // Main method
+    // Main method with User Input
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
         MovieTheaterImplementation theater = new MovieTheaterImplementation(5, 5);
 
-        theater.printSeatingChart();
-        theater.reserveSeat(2, 2, "Wayne");
-        theater.printSeatingChart();
-        theater.cancelSeat(2, 2);
-        theater.printSeatingChart();
+        while (true) {
+            System.out.println("\nWhat would you like to do?");
+            System.out.println("1. View Seating Chart");
+            System.out.println("2. Reserve a Seat");
+            System.out.println("3. Cancel a Reservation");
+            System.out.println("4. Exit");
+            System.out.print("Choose an option: ");
+
+            int choice = scanner.nextInt();
+
+            if (choice == 4) {
+                System.out.println("Thank you for using the Movie Theater system!");
+                break;
+            }
+
+            switch (choice) {
+                case 1:
+                    theater.printSeatingChart();
+                    break;
+                case 2:
+                    System.out.print("Enter row number: ");
+                    int row = scanner.nextInt() - 1;
+                    System.out.print("Enter column number: ");
+                    int col = scanner.nextInt() - 1;
+                    scanner.nextLine(); // Consume newline
+                    System.out.print("Enter your name: ");
+                    String name = scanner.nextLine();
+                    theater.reserveSeat(row, col, name);
+                    break;
+                case 3:
+                    System.out.print("Enter row number to cancel: ");
+                    int cancelRow = scanner.nextInt() - 1;
+                    System.out.print("Enter column number to cancel: ");
+                    int cancelCol = scanner.nextInt() - 1;
+                    theater.cancelSeat(cancelRow, cancelCol);
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+        scanner.close();
     }
 }
